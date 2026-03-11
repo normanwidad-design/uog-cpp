@@ -1,0 +1,409 @@
+---
+title: "Inheritance"
+# subtitle: "More on classes"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        
+        # mermaid:
+        #     theme: default
+        #     fontFamily: sans-serif
+        #     fontSize: 16
+        #     margin: 100
+        css: simple.css
+
+    # html:
+    #     theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+    #     mouse-wheel: true
+    #     highlight-style: github
+    #     slide-number: true
+    #     title-slide-style: pandoc
+    #     echo: true
+    #     code-overflow: wrap
+    #     code-line-numbers: true
+    #     code-block-bg: false          # <-- remove white background in code blocks
+    #     # code-block-border-left: false # optional: remove left border
+    #     # highlight-style: monokai      # good for dark images
+    #     toc: true
+    #     toc-depth: 1
+    #     toc-title: Presentation Outline
+    #     chalkboard: true
+---
+
+# Intro to inheritance
+
+## Intro to inheritance: Shapes
+You want to build a software drawing various **2D Shapes**: Rectangle, Square, Polygon, Circle, Ellipse, etc.
+
+::: {.fragment}
+- You can decide to build each class representing each particular shape. But you recognize "Wait a minute":
+
+  - A `Square` [is a]{style="color:red"} `Rectangle`
+  - A `Rectangle` [is a]{style="color:red"} `Polygon`
+  - A `Circle` [is a]{style="color:red"} `ELlipse`
+  - All of them is a `Shape`
+  
+- Furthore, we notice
+  - A `Polygon` [has a]{style="color:red"} list of `Point2D`
+  - A `Ellipse` [has a]{style="color:red"} center of `Point2D` and [has two]{style="color:red"} two axis sizes `a` and `b` of type `double`.
+  - A `Circle` is similiar to `Ellipse` but `a == b`.
+  - A `Rectangle` [has a]{style="color:red"} has a corner of `Point2D` and two sizes `a` and `b` of type `double`
+  - A `Square` is similar to a `Rectangle` but `a == b`.
+:::
+
+## Intro to inheritance: Shapes
+
+- You notice that
+
+  - Drawing a square should be a consequence of drawing a rectangle with the same size.
+  - Drawing a rectangle should be a consequence of drawing a "special" polygon of 4 sides.
+  - Drawing a circle should be a consequence of drawing an ellipse
+
+So why do we bother to build different classes separately!
+
+## Hierarchies
+
+A hierarchy is a diagram showing how various objects are related.
+
+![](./figures/hierarchy-shape.jpg)
+
+## Intro to inheritance: University People
+
+If the above example cannot convince you enough, look at our University hierarchy.
+
+:::{.fragment}
+**A very small description about roles in our Uni**
+
+- Every member of staffs [has a]{style="color:red"} `name`, a `birthday`, an `ID`
+- Every student [has a]{style="color:red"} `name`, a `birthday`, an `ID`
+- There are different types of staff members: `Lecturer`, `TOMember`, `Demonstrator`, `SecurityGuard`
+- There are different types of students: `UGStudent` (undergraduate), `PGTStudent` (Post-graduate Taught) and `PGRStudent` (Post-graduate Research)
+- Every person in the Uni has their role and knows their role, work on their role.
+:::
+
+:::{.fragment}
+&#10149;&nbsp; If you are about to create all the classes `Lecturer`, `TOMember`, `Demonstrator`, `SecurityGuard`, `UGStudent`, `PGTStudent`, `PGRStudent`, you see that you must [*plug figure here*] a lot for common data members and member functions.
+
+
+![](./figures/ctrl_c_and_ctrl_v.jpg){width=30%}
+
+:::
+
+
+::: {.fragment}
+This violates the principle designing rule: [**Do not repeat yourself**]{style="color:red"}
+:::
+
+## Intro to inheritance: How about the following design hierarchy
+
+```{mermaid}
+%%| echo: false
+classDiagram
+    direction TD
+    %% Person is an abstract base class
+    class Person {
+        <<Abstract>>
+        -name: String
+        -birthday: Date
+        -ID: Integer
+        +knowRole() String
+    }
+
+    %% StaffMember inherits from Person
+    class StaffMember {
+        <<Abstract>>
+        +workOnRole() 
+    }
+    Person <|-- StaffMember : inherits from
+
+    %% Specific Staff Roles
+    class Lecturer {
+        +teach() 
+        +mark() 
+    }
+    class TOMember {
+        +organizeTimeTable() 
+        +processGrades() 
+    }
+    class Demonstrator {
+        +assist() 
+        +provideFB() 
+    }
+    class SecurityGuard {
+        +assist() 
+        +checkSafety() 
+    }
+
+    StaffMember <|-- Lecturer : implements
+    StaffMember <|-- TOMember : implements
+    StaffMember <|-- Demonstrator : implements
+    StaffMember <|-- SecurityGuard : implements
+
+    %% Student inherits from Person
+    class Student {
+        <<Abstract>>
+        +workOnRole() 
+    }
+    Person <|-- Student : inherits from
+
+    %% Specific Student Roles
+    class UGStudent {
+        +writeBScThesis()
+    }
+    class PGTStudent {
+        +writeMScThesis()
+    }
+    class PGRStudent {
+        +writePhDTHesis()
+    }
+
+    Student <|-- UGStudent : implements
+    Student <|-- PGTStudent : implements
+    Student <|-- PGRStudent : implements
+
+    %% Styling (Optional but helpful)
+    style Person fill:#f9f,stroke:#333,stroke-width:2px
+    style StaffMember fill:#bbf,stroke:#333
+    style Student fill:#bfb,stroke:#333
+    style Lecturer fill:#ddd,stroke:#333
+    style UGStudent fill:#ddd,stroke:#333
+```
+
+# Basic inheritance in C++
+
+## Terminilogies
+
+
+## Terminilogy
+
+&#9998;&nbsp; In an inheritance (is-a) relationship
+
+- the class being inherited from: [**parent class**]{style="color:red"}, [**base class**]{style="color:red"}, or [**superclass**]{style="color:red"}
+- the class doing the inheriting: [**child class**]{style="color:red"}, [**derived class**]{style="color:red"}, or [**subclass**]{style="color:red"}
+
+![](./figures/parent-class-vs-child-class.png)
+
+## Basic inheritance in C++: Mini example
+
+&#10149;&nbsp; We will adopt a smaller design structure:
+
+- Every `Lecturer` [is a]{style="color:red"} a `UniPerson`
+- Every `Student` [is a]{style="color:red"} a `UniPerson`
+- Every `Lecturer` and `Student` has `name` and `ID`.
+
+We shall discuss 
+- `work_on_role()` later when we study [**Polymorphism**]{style="color:red"} and [**Virtual Function**]{style="color:red"}.
+- other member functions in `Lecturer` and `Student` when we study [_adding more functionality_] to child class.
+
+
+## Basic inheritance in C++: Mini-diagram for code demonstration
+```{mermaid}
+%%| echo: false
+classDiagram
+    direction LR
+    %% Person is an abstract base class
+    class UniPerson {
+        -name std::string
+        -ID int
+        -age int
+        +get_name() std::string 
+        +get_ID() int
+        +get_age() int
+    }
+    %% class UniPerson
+    %% UniPerson : -name string
+    %% UniPerson : -ID int
+    %% UniPerson : -age int
+
+  
+
+    %% Specific Staff Roles
+    class Lecturer {
+        - salary: double
+        + get_salary() double
+    }
+
+    UniPerson <|-- Lecturer : inherits from
+
+    %% Student inherits from Person
+    class Student {
+        -tuition_fee: double
+        +get_tuition() double
+    }
+    UniPerson <|-- Student : inherits from
+
+
+    %% Styling (Optional but helpful)
+    %% style Person fill:#f9f,stroke:#333,stroke-width:2px
+    %% style Student fill:#bfb,stroke:#333
+    %% style Lecturer fill:#ddd,stroke:#333
+```
+
+## Implementation of Inheritance: class `UniPerson`
+
+&#10149;&nbsp; Let us look at the class `UniPerson`
+
+::: {#lst-class-uni-person lst-cap="class `UniPerson`. Filename=`uniperson.cpp`"}
+```{.cpp}
+{{< include ./cpp/uniperson.cpp >}}
+```
+:::
+
+## Implementation of Inheritance: class `Lecturer` without inheritance
+
+::: {#lst-class-lecturer-without-inheritance lst-cap="class `Lecturer` without inheritance. Filename=`lecturer_noinheritance.cpp`"}
+```{.cpp}
+{{< include ./cpp/lecturer_noinheritance.cpp >}}
+```
+:::
+
+&#10149;&nbsp; **Question** Can you tell me what problem we have?
+
+## Implementation: class `Lecturer` inherited from class `UniPerson`
+
+::: {#lst-class-lecturer-with-inheritance lst-cap="class `Lecturer` inherited from class `UniPerson`. Filename=`lecturer.h`"}
+```{.cpp}
+{{< include ./cpp/lecturer.h >}}
+```
+:::
+
+## Impelemntation: Put two classes together into a `main` program
+
+
+::: {#lst-main-uniperson-lecturer lst-cap="A program using class `Lecturer` derived from the class `UniPerson` Filename=`main_uniperson_lecturer.cpp`"}
+```{.cpp}
+{{< include ./cpp/main_uniperson_lecturer.cpp >}}
+```
+:::
+
+&#10149;&nbsp; **Notice** that we can access `age`, `id` members although we did not define them explicitly in class `Lecturer`. _Let us run the code._
+
+## Implementation: class `Student`
+
+&#10149;&nbsp; It is now easy to write class `Student` derived from `UniPerson`
+
+::: {#lst-class-student lst-cap="class `Student` inherited from the class `UniPerson` Filename=`student.h`"}
+```{.cpp}
+{{< include ./cpp/student.h >}}
+```
+:::
+
+## Implementation: Put three classes together into a `main` program
+
+
+::: {#lst-main-uniperson-lecturer-student lst-cap="A program using classes `Lecturer` and `Student` derived from the class `UniPerson` Filename=`main_uniperson_lecturer_student.cpp`"}
+```{.cpp}
+{{< include ./cpp/main_uniperson_lecturer_student.cpp >}}
+```
+:::
+
+## Inheritance chains
+
+&#9998;&nbsp; We can comeback to our bigger diagram: `UGStudent`, `PGTStudent` and `PGRStudent` are all derived from class `Student` and thus we have [**inherintance chain**]{style:"color:red"}
+
+```{mermaid}
+%%| echo: false
+classDiagram
+    %% Person is an abstract base class
+    class UniPerson {
+    }
+    class Lecturer {
+    }
+    class Student {
+    }
+    UniPerson <|-- Student : inherits from
+    class PGTStudent {
+    }
+    class UGStudent {
+    }
+
+    UniPerson <|-- Lecturer : inherits from
+    Student <|-- UGStudent: inherits from
+    Student <|-- PGTStudent: inherits from
+    Student <|-- PGRStudent: inherits from
+    %% Styling (Optional but helpful)
+    style UniPerson fill:#f9f,stroke:#333,stroke-width:2px
+    style Student fill:#bfb,stroke:#333
+    style Lecturer fill:#ddd,stroke:#333
+```
+
+&#10149;&nbsp; We will write a class for `UGStudent`. 
+
+&#10149;&nbsp; Instead of writing everything all the classes in one single giant filet, let us do this in multiple header files, which is the next topic.
+
+# Split the program into header files and implementation files
+
+## Goals of this example
+
+:::{.fragment}
+&#9998;&nbsp; We go through the steps that need to be done to build a program that needs implementation of many classes.
+
+- Write header files (`filename.h` or `filename.hpp`) for each class
+- Write implementation files (`filename.cpp`) for the corresponding class
+- Compile the main program using the `.cpp` files.
+:::
+
+::: {.fragment}
+We build four classes and one main program. Each class is done by one header file `.h` and one implementation file `.cpp`:
+
+- class `UniPerson`
+- class `Lecturer` inherits from `UniPerson`
+- class `Student` inherits from `UniPerson`
+- class `UGStudent` inherits from `Student`
+:::
+
+## class `UniPerson`: Header file
+
+::: {#lst-header-file-uniperson lst-cap="Header file for class `UniPerson` Filename=`uni-program/uniperson.h`"}
+```{.cpp}
+{{< include ./cpp/uni-program/uniperson.h >}}
+```
+:::
+
+## class `UniPerson`: Implementation file
+
+::: {#lst-implementation-file-uniperson lst-cap="Implementation file for class `UniPerson` Filename=`uni-program/uniperson.cpp`"}
+```{.cpp}
+{{< include ./cpp/uni-program/uniperson.cpp >}}
+```
+:::
+
+## class `Lecturer`: Header file
+
+::: {#lst-header-file-lecturer lst-cap="Header file for class `Lecturer` Filename=`uni-program/lecturer.h`"}
+```{.cpp}
+{{< include ./cpp/uni-program/lecturer.h >}}
+```
+:::
+
+## class `Lecturer`: Implementation file
+
+::: {#lst-implementation-file-lecturer lst-cap="Implementation file for class `Lecturer` Filename=`uni-program/lecturer.cpp`"}
+```{.cpp}
+{{< include ./cpp/uni-program/lecturer.cpp >}}
+```
+:::
+
+
+
+
+
