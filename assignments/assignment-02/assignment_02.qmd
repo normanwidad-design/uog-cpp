@@ -11,9 +11,15 @@ execute:
   eval: true
 format: 
     html:
+        embed-resources: true
+        grid:
+            body-width: 1400px
+            margin-width: 20px
+            sidebar-width: 200px
         # page-layout: full
-        margin-left: 0.5em
-        margin-right: 0.5em
+        # margin-left: 0.5em
+        # margin-right: 0.5em
+
         css: style.css
         number-sections: true
         number-depth: 3
@@ -138,13 +144,13 @@ As this is the ECG diagram, let us draw them and show the label as on the figure
 ```{python}
 import matplotlib.pyplot as plt
 nrows, ncols = 3, 3
-plt.figure(figsize=(6, 6))
+plt.figure(figsize=(9, 6))
 np.random.seed(seed=42)         # just for reproducibility purpose
 for i in range(nrows * ncols):
     plt.subplot(nrows, ncols, i+1)
     idx = np.random.randint(low=0, high=X.shape[0])
     plt.plot(data[idx])
-    plt.title(f"label = {int(y[idx])}")
+    plt.title(f"label (y) = {int(y[idx])}")
     plt.xticks(np.linspace(0, 120, 5))
     plt.grid(True)
     
