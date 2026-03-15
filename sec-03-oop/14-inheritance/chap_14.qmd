@@ -8,6 +8,7 @@ author: |
 author-meta: "Lecturer in Multiscale Materials"
 format: 
     revealjs:
+        # embed-resources: true
         theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
         mouse-wheel: true
         highlight-style: github
@@ -23,12 +24,6 @@ format:
         toc-depth: 1
         toc-title: Presentation Outline
         chalkboard: true
-        
-        # mermaid:
-        #     theme: default
-        #     fontFamily: sans-serif
-        #     fontSize: 16
-        #     margin: 100
         css: simple.css
 
     # html:
@@ -730,3 +725,139 @@ Think about rewriting `Student` so that we can call `UniPerson`'s constructor in
 
 &#10140;&nbsp; In the above example, when `c` is destroyed, the `C` destructor is called first, then the `B` destructor, then the `A` destructor.
 
+# Inheritance and access specifiers
+
+We have learned two access specifiers:
+
+- private
+- public
+
+We have also seen the access specifier `protected`.  
+
+&#101449;&nbsp; We will learn more about how access specifiers interact with inheritance in this lesson.
+
+## The `protected` access specifier
+
+&#9998;&nbsp; The access specifier `protected` is only useful in an inheritance context.
+
+:::{.my-box}
+- The `protected` access specifier allows the class the member belongs to, friends, and derived classes to access the member.
+- `protected` members are not accessible from outside the class.
+:::
+
+## Access specifiers in inheritance: Code illustration
+
+::: {#lst-access-specifier lst-cap="Calling base constructor in member initializer list of derived classes can be done in inheritance chain. Filename=`initializing_base_members_inheritance_chain.cpp`"}
+```{.cpp}
+{{< include ./cpp/initializing_base_members_inheritance_chain.cpp >}}
+```
+:::
+
+## When should we use the `protected` access specifier
+
+[**Discuss briefly in the lecture.**]{style="color:crimson"} &#10140;&nbsp; _Students need to read these points carefully again._
+
+- With a `protected` attribute in a base class, derived classes can access that member directly. &#10140;&nbsp; If we later change anything about the `protected` attribute (type, value meaning, etc.), we'll probably **need to change both the base class and all of the derived classes**.
+- Using the `protected` access specifier is most useful when 
+    - we (and our team) are going to be the ones deriving from our own classes
+    - number of derived classes is reasonable
+- Making members private is good for insulating the public or derived classes from implementation changes, and for ensuring invariants (fractions must have non-zero denominators) are maintained properly.
+
+    - Think about the open-source code and you made member protected. Other developers can access the members and spoil them.
+
+    - This implies our class need a larger public (or protected) interface to support all of the functions that public or derived classes need for operation (high cost to build and maintain)
+- It's better to make your members private if we can, and [**only use `protected` when derived classes are planned**]{style="color:navy"} and the cost to build and maintain an interface to those private members is too high.
+
+## When should we use the `protected` access specifier
+
+:::{.callout-important}
+**Best practice**
+
+Favor private members over protected members.
+:::
+
+## Different kinds of inheritance, and their impact on access
+
+&#9998;&nbsp; There are three different ways for classes to inherit from other classes: `public`, `protected`, `private`
+
+&#9998;&nbsp; We have $9$ combinations: $3$ member access specifiers and 3 inheritance types.
+```{.cpp}
+// Inherit from Base publicly
+class Pub: public Base
+{
+};
+
+// Inherit from Base protectedly
+class Pro: protected Base
+{
+};
+
+// Inherit from Base privately
+class Pri: private Base
+{
+};
+
+class Def: Base // Defaults to private inheritance
+{
+};
+```
+
+## Different kinds of inheritance, and their impact on access
+
+&#10149;&nbsp; **Some remarks** 
+
+- It is not that I cannot teach this component carefully in the live lecture.
+- I think we will get confused and forget most of the explained cases right after leaving the classroom.
+- The point is to make you aware of these concepts and give you an opportunity to learn them deeper.
+
+&#10149;&nbsp; Therefore, I write down some keypoints and skip the slides. _Students should read the materials later._
+
+:::{.callout-tip}
+**Key rules to interpret different combinations**
+
+- A class can always access its own (non-inherited) members.
+- The public accesses the members of a class based on the access specifiers of the class it is accessing.
+- A derived class accesses inherited members based on the access specifier inherited from the parent class. This varies depending on the access specifier and type of inheritance used.
+:::
+
+## `public` inheritance
+
+- `public` inheritance is by far the most commonly used type of inheritance. 
+- Very rarely will we see or use the other types of inheritance.
+
+| Access specifier in base class | Access specifier when inherited publicly |
+| :--- | :--- |
+| Public | Public |
+| Protected | Protected |
+| Private | Inaccessible |
+
+## `protected` inheritance
+
+- `protected` inheritance is the least common method of inheritance. 
+- It is almost never used, except in very particular cases.
+- With `protected` inheritance, the `public` and `protected` members become `protected`, and `private` members stay inaccessible.
+
+| Access specifier in base class | Access specifier when inherited protectedly |
+| :--- | :--- |
+| Public | Protected |
+| Protected | Protected |
+| Private | Inaccessible |
+
+## `private` inheritance
+
+- With `private` inheritance, all members from the base class are inherited as `private`.
+- `private` members are inaccessible, and `protected` and `public` members become `private`.
+
+| Access specifier in base class | Access specifier when inherited privately |
+| :--- | :--- |
+| Public | Private |
+| Protected | Private |
+| Private | Inaccessible |
+
+## Access specifier in inheritance: Summary
+
+| Base Class Member | Public Inheritance | Protected Inheritance | Private Inheritance |
+| :--- | :--- | :--- | :--- |
+| **Public** | Public | Protected | Private |
+| **Protected** | Protected | Protected | Private |
+| **Private** | Inaccessible | Inaccessible | Inaccessible |

@@ -210,6 +210,7 @@
 <li><a href="#/split-the-program-into-header-files-and-implementation-files" id="/toc-split-the-program-into-header-files-and-implementation-files">Split the program into header files and implementation files</a></li>
 <li><a href="#/order-of-construction-of-derived-classes" id="/toc-order-of-construction-of-derived-classes">Order of construction of derived classes</a></li>
 <li><a href="#/constructors-and-initialization-of-derived-classes" id="/toc-constructors-and-initialization-of-derived-classes">Constructors and initialization of derived classes</a></li>
+<li><a href="#/inheritance-and-access-specifiers" id="/toc-inheritance-and-access-specifiers">Inheritance and access specifiers</a></li>
 </ul>
 </nav>
 </section>
@@ -1252,7 +1253,7 @@ Listing&nbsp;17: Order of construction of derived classes in an inheritance chai
 <h1>Constructors and initialization of derived classes</h1>
 <p>✎&nbsp; In Python, we can use <code>super()</code> to access the parent’s data and member functions.</p>
 <p>✎&nbsp; Thus, we can write <code>super().__init__(self,...)</code> to use the constructor of the parent class.</p>
-<div id="4dde053c" class="cell" data-execution_count="1">
+<div id="838c2b66" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href=""></a><span class="kw">class</span> UniPerson:</span>
 <span id="cb18-2"><a href=""></a>    </span>
 <span id="cb18-3"><a href=""></a>    nextID <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># class variable</span></span>
@@ -1270,7 +1271,7 @@ Listing&nbsp;17: Order of construction of derived classes in an inheritance chai
 </section>
 <section id="revisit-python-example" class="slide level2">
 <h2>Revisit Python example</h2>
-<div id="0ec06221" class="cell" data-execution_count="2">
+<div id="cfccfe3a" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href=""></a><span class="kw">class</span> UniPerson:</span>
 <span id="cb19-2"><a href=""></a>    nextID <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># class variable, functioning like static int nextID in C++</span></span>
 <span id="cb19-3"><a href=""></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, name<span class="op">=</span><span class="st">""</span>, age<span class="op">=</span><span class="dv">18</span>):</span>
@@ -1523,6 +1524,294 @@ Listing&nbsp;20: Calling base constructor in member initializer list of derived 
 <h2>Destructors</h2>
 <p>✎&nbsp; When a derived class is destroyed, each destructor is called in the reverse order of construction.</p>
 <p>➜&nbsp; In the above example, when <code>c</code> is destroyed, the <code>C</code> destructor is called first, then the <code>B</code> destructor, then the <code>A</code> destructor.</p>
+</section></section>
+<section>
+<section id="inheritance-and-access-specifiers" class="title-slide slide level1 center">
+<h1>Inheritance and access specifiers</h1>
+<p>We have learned two access specifiers:</p>
+<ul>
+<li>private</li>
+<li>public</li>
+</ul>
+<p>We have also seen the access specifier <code>protected</code>.</p>
+<p>𘱉&nbsp; We will learn more about how access specifiers interact with inheritance in this lesson.</p>
+</section>
+<section id="the-protected-access-specifier" class="slide level2">
+<h2>The <code>protected</code> access specifier</h2>
+<p>✎&nbsp; The access specifier <code>protected</code> is only useful in an inheritance context.</p>
+<div class="my-box">
+<ul>
+<li>The <code>protected</code> access specifier allows the class the member belongs to, friends, and derived classes to access the member.</li>
+<li><code>protected</code> members are not accessible from outside the class.</li>
+</ul>
+</div>
+</section>
+<section id="access-specifiers-in-inheritance-code-illustration" class="slide level2">
+<h2>Access specifiers in inheritance: Code illustration</h2>
+<div id="lst-access-specifier" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-access-specifier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;21: Calling base constructor in member initializer list of derived classes can be done in inheritance chain. Filename=<code>initializing_base_members_inheritance_chain.cpp</code>
+</figcaption>
+<div aria-describedby="lst-access-specifier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb29-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb29-2"><a href=""></a><span class="kw">class</span> A</span>
+<span id="cb29-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-4"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb29-5"><a href=""></a>    A<span class="op">(</span><span class="dt">int</span> a<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb29-6"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"A: "</span> <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb29-7"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb29-8"><a href=""></a><span class="op">};</span></span>
+<span id="cb29-9"><a href=""></a></span>
+<span id="cb29-10"><a href=""></a><span class="kw">class</span> B<span class="op">:</span> <span class="kw">public</span> A</span>
+<span id="cb29-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-12"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb29-13"><a href=""></a>    B<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">double</span> b<span class="op">)</span> <span class="op">:</span> A<span class="op">{</span> a <span class="op">}</span> <span class="op">{</span></span>
+<span id="cb29-14"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"B: "</span> <span class="op">&lt;&lt;</span> b <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb29-15"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb29-16"><a href=""></a><span class="op">};</span></span>
+<span id="cb29-17"><a href=""></a></span>
+<span id="cb29-18"><a href=""></a><span class="kw">class</span> C<span class="op">:</span> <span class="kw">public</span> B</span>
+<span id="cb29-19"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-20"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb29-21"><a href=""></a>    C<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">double</span> b<span class="op">,</span> <span class="dt">char</span> c<span class="op">)</span> <span class="op">:</span> B<span class="op">{</span> a<span class="op">,</span> b <span class="op">}</span> <span class="op">{</span></span>
+<span id="cb29-22"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"C: "</span> <span class="op">&lt;&lt;</span> c <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb29-23"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb29-24"><a href=""></a><span class="op">};</span></span>
+<span id="cb29-25"><a href=""></a></span>
+<span id="cb29-26"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb29-27"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-28"><a href=""></a>    C c<span class="op">{</span> <span class="dv">5</span><span class="op">,</span> <span class="fl">4.3</span><span class="op">,</span> <span class="ch">'R'</span> <span class="op">};</span></span>
+<span id="cb29-29"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb29-30"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="when-should-we-use-the-protected-access-specifier" class="slide level2">
+<h2>When should we use the <code>protected</code> access specifier</h2>
+<p><span style="color:crimson"><strong>Discuss briefly in the lecture.</strong></span> ➜&nbsp; <em>Students need to read these points carefully again.</em></p>
+<ul>
+<li><p>With a <code>protected</code> attribute in a base class, derived classes can access that member directly. ➜&nbsp; If we later change anything about the <code>protected</code> attribute (type, value meaning, etc.), we’ll probably <strong>need to change both the base class and all of the derived classes</strong>.</p></li>
+<li><p>Using the <code>protected</code> access specifier is most useful when</p>
+<ul>
+<li>we (and our team) are going to be the ones deriving from our own classes</li>
+<li>number of derived classes is reasonable</li>
+</ul></li>
+<li><p>Making members private is good for insulating the public or derived classes from implementation changes, and for ensuring invariants (fractions must have non-zero denominators) are maintained properly.</p>
+<ul>
+<li><p>Think about the open-source code and you made member protected. Other developers can access the members and spoil them.</p></li>
+<li><p>This implies our class need a larger public (or protected) interface to support all of the functions that public or derived classes need for operation (high cost to build and maintain)</p></li>
+</ul></li>
+<li><p>It’s better to make your members private if we can, and <span style="color:navy"><strong>only use <code>protected</code> when derived classes are planned</strong></span> and the cost to build and maintain an interface to those private members is too high.</p></li>
+</ul>
+</section>
+<section id="when-should-we-use-the-protected-access-specifier-1" class="slide level2">
+<h2>When should we use the <code>protected</code> access specifier</h2>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Best practice</strong></p>
+<p>Favor private members over protected members.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="different-kinds-of-inheritance-and-their-impact-on-access" class="slide level2">
+<h2>Different kinds of inheritance, and their impact on access</h2>
+<p>✎&nbsp; There are three different ways for classes to inherit from other classes: <code>public</code>, <code>protected</code>, <code>private</code></p>
+<p>✎&nbsp; We have <span class="math inline">\(9\)</span> combinations: <span class="math inline">\(3\)</span> member access specifiers and 3 inheritance types.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb30-1"><a href=""></a><span class="co">// Inherit from Base publicly</span></span>
+<span id="cb30-2"><a href=""></a><span class="kw">class</span> Pub<span class="op">:</span> <span class="kw">public</span> Base</span>
+<span id="cb30-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-4"><a href=""></a><span class="op">};</span></span>
+<span id="cb30-5"><a href=""></a></span>
+<span id="cb30-6"><a href=""></a><span class="co">// Inherit from Base protectedly</span></span>
+<span id="cb30-7"><a href=""></a><span class="kw">class</span> Pro<span class="op">:</span> <span class="kw">protected</span> Base</span>
+<span id="cb30-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb30-10"><a href=""></a></span>
+<span id="cb30-11"><a href=""></a><span class="co">// Inherit from Base privately</span></span>
+<span id="cb30-12"><a href=""></a><span class="kw">class</span> Pri<span class="op">:</span> <span class="kw">private</span> Base</span>
+<span id="cb30-13"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-14"><a href=""></a><span class="op">};</span></span>
+<span id="cb30-15"><a href=""></a></span>
+<span id="cb30-16"><a href=""></a><span class="kw">class</span> Def<span class="op">:</span> Base <span class="co">// Defaults to private inheritance</span></span>
+<span id="cb30-17"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-18"><a href=""></a><span class="op">};</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="different-kinds-of-inheritance-and-their-impact-on-access-1" class="slide level2">
+<h2>Different kinds of inheritance, and their impact on access</h2>
+<p>➥&nbsp; <strong>Some remarks</strong></p>
+<ul>
+<li>It is not that I cannot teach this component carefully in the live lecture.</li>
+<li>I think we will get confused and forget most of the explained cases right after leaving the classroom.</li>
+<li>The point is to make you aware of these concepts and give you an opportunity to learn them deeper.</li>
+</ul>
+<p>➥&nbsp; Therefore, I write down some keypoints and skip the slides. <em>Students should read the materials later.</em></p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Key rules to interpret different combinations</strong></p>
+<ul>
+<li>A class can always access its own (non-inherited) members.</li>
+<li>The public accesses the members of a class based on the access specifiers of the class it is accessing.</li>
+<li>A derived class accesses inherited members based on the access specifier inherited from the parent class. This varies depending on the access specifier and type of inheritance used.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="public-inheritance" class="slide level2">
+<h2><code>public</code> inheritance</h2>
+<ul>
+<li><code>public</code> inheritance is by far the most commonly used type of inheritance.</li>
+<li>Very rarely will we see or use the other types of inheritance.</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Access specifier in base class</th>
+<th style="text-align: left;">Access specifier when inherited publicly</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Public</td>
+<td style="text-align: left;">Public</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Protected</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Private</td>
+<td style="text-align: left;">Inaccessible</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="protected-inheritance" class="slide level2">
+<h2><code>protected</code> inheritance</h2>
+<ul>
+<li><code>protected</code> inheritance is the least common method of inheritance.</li>
+<li>It is almost never used, except in very particular cases.</li>
+<li>With <code>protected</code> inheritance, the <code>public</code> and <code>protected</code> members become <code>protected</code>, and <code>private</code> members stay inaccessible.</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Access specifier in base class</th>
+<th style="text-align: left;">Access specifier when inherited protectedly</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Public</td>
+<td style="text-align: left;">Protected</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Protected</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Private</td>
+<td style="text-align: left;">Inaccessible</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="private-inheritance" class="slide level2">
+<h2><code>private</code> inheritance</h2>
+<ul>
+<li>With <code>private</code> inheritance, all members from the base class are inherited as <code>private</code>.</li>
+<li><code>private</code> members are inaccessible, and <code>protected</code> and <code>public</code> members become <code>private</code>.</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Access specifier in base class</th>
+<th style="text-align: left;">Access specifier when inherited privately</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Public</td>
+<td style="text-align: left;">Private</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Private</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Private</td>
+<td style="text-align: left;">Inaccessible</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="access-specifier-in-inheritance-summary" class="slide level2">
+<h2>Access specifier in inheritance: Summary</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Base Class Member</th>
+<th style="text-align: left;">Public Inheritance</th>
+<th style="text-align: left;">Protected Inheritance</th>
+<th style="text-align: left;">Private Inheritance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Public</strong></td>
+<td style="text-align: left;">Public</td>
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Private</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Protected</strong></td>
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Protected</td>
+<td style="text-align: left;">Private</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Private</strong></td>
+<td style="text-align: left;">Inaccessible</td>
+<td style="text-align: left;">Inaccessible</td>
+<td style="text-align: left;">Inaccessible</td>
+</tr>
+</tbody>
+</table>
 
 </section></section>
     </div>

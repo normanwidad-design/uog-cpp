@@ -517,7 +517,8 @@ Training the Logistic Regressio from **scikit-learn**, namely `LogisticRegressio
 
 
 ```{python}
-# We don't need to split the dataset into training set and test set. We just use all the given data here. We use max_iter=1000 to ensure
+# We don't need to split the dataset into training set and test set. 
+# We just use all the given data here. We use max_iter=1000 to ensure
 # convergence on the given dataset
 model = LogisticRegression(max_iter=1000) 
 model.fit(X, y)
