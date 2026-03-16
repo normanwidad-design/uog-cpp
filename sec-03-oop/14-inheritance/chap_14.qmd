@@ -931,17 +931,56 @@ We have learned these concepts from **Introductory Programming 2** and also in s
 ```
 :::
 
-# Hiding inherited functionality
+# Change an inherited member's access level and hide inherited functionality
 
-&#9998;&nbsp; C++ gives us the ability to change an inherited member’s access specifier in the derived class.
+&#9998;&nbsp; **Change an inherited member's access**
 
-&#9998;&nbsp; This is done by using a using declaration to identify the (scoped) base class member that is having its access changed in the derived class, under the new access specifier.
+C++ gives us the ability to change an inherited member’s access specifier in the derived class.
+
+&#9998;&nbsp; **Hide functionality**
+
+In a derived class, it is possible to hide functionality that exists in the base class, so that it can not be accessed through the derived class.
+
+We can do both with `using` declaration.
 
 [We skip this component.]{style="color:crimson"} _The students can learn it at home._
 
-## Hiding functionality
+## Change an inherited member's access level: make `public`
+
+&#9998;&nbsp; C++ gives us the ability to change an inherited member’s access specifier in the derived class, by a [`using` declaration]{style="color:red"} -- Let us run this code snippet:
+
+:::{#lst-change-access-level-derived lst-cap="With `using` declaration we can change the access level of derived class' members. Filename=`change_inherited_member_access_level.cpp`"}
+```{.cpp}
+{{< include ./cpp/change_inherited_member_access_level.cpp >}}
+```
+:::
+
+## Change an inherited member's access level: hide functionality (make `private`)
+
+&#9998;&nbsp; In a derived class, it is [**possible to hide functionality that exists in the base class**]{style="color:navy"}, so that it can not be accessed through the derived class -- Let us play around this code snippet:
+
+:::{#lst-hide-functionality lst-cap="With `using` declaration we can also high functionality that exists in the base class. Filename=`hide_functionality.cpp`"}
+```{.cpp}
+{{< include ./cpp/hide_functionality.cpp >}}
+```
+:::
+
+## Change an inherited member's access level: Summary
+
+&#9998;&nbsp; With `using` declaration, we can change an inherited member's access level
+
+- make the `member` in `Derived` class `public` by declaring `using Base::member;` below access specifier `public:`
+- hide the `member` in `Based` class by declaring `using Base::membe;` below access specifier `private:`
 
 ## Deleting functions in derived class
+
+&#9998;&nbsp; We can mark member functions as deleted in the derived class, ensuring they cannot be called at all though a derived object.
+
+:::{#lst-hide-functionality lst-cap="We can `delete` a function inherited from the base class in the derived class. This function cannot be called at all through a derived object. Filename=`delete_functions_in_derived.cpp`"}
+```{.cpp}
+{{< include ./cpp/delete_functions_in_derived.cpp >}}
+```
+:::
 
 # Multiple inheritance
 
