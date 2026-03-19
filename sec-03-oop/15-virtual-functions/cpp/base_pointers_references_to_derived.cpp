@@ -27,7 +27,7 @@ public:
     }
 
     std::string_view get_name() const { return "Derived"; }
-    int get_value() const { return value; }
+    double get_value() const { return value; }
 };
 
 int main()
