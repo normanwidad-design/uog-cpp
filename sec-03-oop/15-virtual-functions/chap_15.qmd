@@ -563,3 +563,4 @@ public:
 
     virtual ~IErrorLog() {} // make a virtual destructor in case we delete an IErrorLog pointer, so the proper derived destructor is called
 };
+```
