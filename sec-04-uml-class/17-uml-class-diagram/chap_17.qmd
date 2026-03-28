@@ -542,12 +542,12 @@ classDiagram
     }
 
     class Polygon {
-        -List~Point~ points
+        %% -List~Point~ points
         +draw() void
     }
 
     class Rectangle {
-        -Point bottom_left
+        %% -Point bottom_left
         -float width
         -float height
         -float theta
@@ -559,7 +559,7 @@ classDiagram
     }
 
     class Ellipse {
-        -Point center
+        %% -Point center
         -float width
         -float height
         -float theta
