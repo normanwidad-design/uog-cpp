@@ -23,6 +23,29 @@ format:
         toc-title: Presentation Outline
         chalkboard: true
         css: simple.css
+    pdf:
+        embed-source: true
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: simple.css
+        # mouse-wheel: true
+        # highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 3
+        toc-title: Table of Conents
+        chalkboard: true
 ---
 
 # Why Object-Oriented Programming

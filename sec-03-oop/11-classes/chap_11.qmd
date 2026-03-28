@@ -7,6 +7,8 @@ author: |
 author-meta: "Lecturer in Multiscale Materials"
 format: 
     revealjs:
+        output-file: "chap_11_slide.html"
+        embed-source: true
         theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
         mouse-wheel: true
         highlight-style: github
@@ -20,9 +22,52 @@ format:
         # highlight-style: monokai      # good for dark images
         toc: true
         toc-depth: 1
-        toc-title: Presentation Outline
-        chalkboard: true
-        css: ../../simple.css
+        toc-title: Contents
+        # chalkboard: true
+        css: simple.css
+    html:
+        output-file: "chap_11.html"
+        embed-source: true
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Contents
+        # chalkboard: true
+        css: simple.css
+    pdf:
+        output-file: "chap_11.pdf"
+        embed-source: true
+        
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: simple.css
+        # mouse-wheel: true
+        # highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
 ---
 
 # Member access
@@ -913,3 +958,4 @@ Fraction(const Fraction& fraction) = delete;
 &#10149;&nbsp; Write your own example to understand this.
 
 I provided the code already: `remove_copy_constructor_using_delete.cpp`; you see on GitHub \& Moodle.
+:::
