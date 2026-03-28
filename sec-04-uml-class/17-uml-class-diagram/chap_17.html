@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>Assignment 02</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -27,22 +30,21 @@ ul.task-list li input[type="checkbox"] {
 <script src="chap_17_files/libs/clipboard/clipboard.min.js"></script>
 <script src="chap_17_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="chap_17_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="chap_17_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="chap_17_files/libs/quarto-html/popper.min.js"></script>
 <script src="chap_17_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="chap_17_files/libs/quarto-html/anchor.min.js"></script>
 <link href="chap_17_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="chap_17_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="chap_17_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="chap_17_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="chap_17_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="chap_17_files/libs/bootstrap/bootstrap-b87272d9800740e7bada56b571600860.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="chap_17_files/libs/bootstrap/bootstrap-9e380c2ed7ec3741b724f7ccfaf80cd1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <meta name="mermaid-theme" content="neutral">
 <script src="chap_17_files/libs/quarto-diagram/mermaid.min.js"></script>
 <script src="chap_17_files/libs/quarto-diagram/mermaid-init.js"></script>
 <link href="chap_17_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -104,6 +106,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#common-cardinality-notations" id="toc-common-cardinality-notations" class="nav-link" data-scroll-target="#common-cardinality-notations"><span class="header-section-number">4.1</span> Common Cardinality Notations</a></li>
   <li><a href="#cardinality-examples" id="toc-cardinality-examples" class="nav-link" data-scroll-target="#cardinality-examples"><span class="header-section-number">4.2</span> Cardinality: Examples</a></li>
+  </ul></li>
+  <li><a href="#relationship-between-classes-and-cardinality-complex-examples" id="toc-relationship-between-classes-and-cardinality-complex-examples" class="nav-link" data-scroll-target="#relationship-between-classes-and-cardinality-complex-examples"><span class="header-section-number">5</span> Relationship between classes and Cardinality: Complex Examples</a></li>
+  <li><a href="#past-paper-exam" id="toc-past-paper-exam" class="nav-link" data-scroll-target="#past-paper-exam"><span class="header-section-number">6</span> Past paper exam</a>
+  <ul class="collapse">
+  <li><a href="#shapes" id="toc-shapes" class="nav-link" data-scroll-target="#shapes"><span class="header-section-number">6.1</span> Shapes</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -787,6 +794,189 @@ Note
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="relationship-between-classes-and-cardinality-complex-examples" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Relationship between classes and Cardinality: Complex Examples</h1>
+<p>➥&nbsp; <span style="color:royalblue"><strong>Example 1</strong></span> <code>Flight</code>, <code>Airport</code> and <code>Pilot</code> have the association relationships.</p>
+<ul>
+<li>A <code>Pilot</code> “works” a <code>Flight</code>. It is a <span style="color:magenta">relationship of service/interaction, not a structural “part-of” hierarchy.</span></li>
+<li>An <code>Airport</code> can host multiple <code>Flight</code>s. One <code>Flight</code> can arrive at and depart from an <code>Airport</code>.</li>
+</ul>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">classDiagram
+    class Flight {
+        -String flight_number
+        -DateTime depart_time
+        +delay_flight(int minutes)
+    }
+
+    class Pilot {
+        -String licenseNumber
+        +String name
+        +get_flight_hours() double
+    }
+
+    class Airport {
+        -String iataCode
+        +String city
+        +get_weather() String
+    }
+
+    %% Association Relationships
+    %% A flight has 2 pilots (Captain and Co-Pilot)
+    Flight "0..*" -- "2" Pilot : assigned to
+    
+    %% A flight has exactly one departure and one arrival airport
+    Flight "0..*" -- "1" Airport : departs from
+    Flight "0..*" -- "1" Airport : arrives at
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>➥&nbsp; [<strong>Example 2</strong>] Relationships between <code>Department</code>, <code>Lecturer</code>, <code>Student</code> and <code>Course</code></p>
+<ol type="1">
+<li>A <code>Department</code> has many <code>Lecturer</code>s</li>
+<li>A <code>Department</code> has many <code>Student</code>s</li>
+<li>A <code>Department</code> offers many <code>Course</code>s</li>
+<li>Multiple <code>Lecturer</code>s can teach one <code>Course</code>.</li>
+<li>One <code>Lecturer</code> can teach multiple <code>Course</code>s.</li>
+<li>One <code>Student</code> can take many <code>Course</code>s.</li>
+<li>One <code>Course</code> can be enrolled by many <code>Student</code>s.</li>
+</ol>
+<p>As you can see: - The bullet points (1), (2) and (3) carry the idea of “part-of”. - The bullet points (4) and (5) carry the idea of “providing/using service”. - The bullet points (6) and (7) carry the idea of “offering/using the service”.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Of course, we can use “has” for every sentence above in daily life. But since one <code>Student</code> rarely belongs to multiple <code>Department</code>s, the idea of “interaction between <code>Student</code> and <code>Department</code>” is not high. Students don’t change from one department to another department frequenly (perhaps not at all during their entire study program). However, lecturers change courses during theit career quite frequently. For that reason, the frequency of interaction between them is quite high.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">classDiagram
+    class Department {
+        -String deptName
+        +addLecturer(Lecturer l)
+        +assignCourse(Course c)
+    }
+
+    class Lecturer {
+        -String staffId
+        +String name
+        +getSpecialization() String
+    }
+
+    class Student {
+        -String studentId
+        +String gpa
+    }
+
+    class Course {
+        -String courseId
+        -int credits
+    }
+
+    %% Aggregation: Department is the "Whole"
+    Department "1" o-- "1..*" Lecturer : employs
+    Department "1" o-- "1..*" Student : manages
+    Department "1" o-- "1..*" Course : offers
+
+    %% Association: Functional relationships
+    Lecturer "1..*" -- "1..*" Course : teaches
+    Student "1..*" -- "1..*" Course : enrolled in
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="past-paper-exam" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Past paper exam</h1>
+<section id="shapes" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="shapes"><span class="header-section-number">6.1</span> Shapes</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">classDiagram
+    class Shape {
+        &lt;&lt;abstract&gt;&gt;
+        +draw()* void
+    }
+
+    class Point {
+        +float x
+        +float y
+    }
+
+    class Polygon {
+        -List~Point~ points
+        +draw() void
+    }
+
+    class Rectangle {
+        -Point bottom_left
+        -float width
+        -float height
+        -float theta
+        +draw() void
+    }
+
+    class Square {
+
+    }
+
+    class Ellipse {
+        -Point center
+        -float width
+        -float height
+        -float theta
+        +draw() void
+    }
+
+    class Circle {
+        
+    }
+
+    %% Inheritance (Generalization)
+    Shape &lt;|.. Polygon
+    Shape &lt;|.. Ellipse
+    Polygon &lt;|-- Rectangle
+    Rectangle &lt;|-- Square
+    Ellipse &lt;|-- Circle
+
+    %% Composition and Multiplicity
+    Polygon "1" *-- "3..*" Point : contains
+    Rectangle "1" *-- "1" Point : bottom-left
+    Ellipse "1" *-- "1" Point : center
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<ul>
+<li>If you want, you can put <code>+draw(): void</code> again in <code>Square</code> and <code>Circle</code> but it is unnecessary.</li>
+<li>However, you must put <code>+draw(): void</code> in <code>Polygon</code> and <code>Ellipse</code> because they implements the <code>+draw(): void</code> in the abstract base class.</li>
+</ul>
 </section>
 </section>
 

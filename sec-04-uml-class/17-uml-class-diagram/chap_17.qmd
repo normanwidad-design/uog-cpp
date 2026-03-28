@@ -435,3 +435,153 @@ classDiagram
     %% The "*" on both ends signifies a Many-to-Many relationship
     Doctor "0..*" -- "0..*" Patient : treats
 ```
+
+# Relationship between classes and Cardinality: Complex Examples
+
+&#10149;&nbsp; [**Example 1**]{style="color:royalblue"} `Flight`, `Airport` and `Pilot` have the association relationships. 
+
+- A `Pilot` "works" a `Flight`. It is a [relationship of service/interaction, not a structural "part-of" hierarchy.]{style="color:magenta"}
+- An `Airport` can host multiple `Flight`s. One `Flight` can arrive at and depart from an `Airport`.
+
+```{mermaid}
+classDiagram
+    class Flight {
+        -String flight_number
+        -DateTime depart_time
+        +delay_flight(int minutes)
+    }
+
+    class Pilot {
+        -String licenseNumber
+        +String name
+        +get_flight_hours() double
+    }
+
+    class Airport {
+        -String iataCode
+        +String city
+        +get_weather() String
+    }
+
+    %% Association Relationships
+    %% A flight has 2 pilots (Captain and Co-Pilot)
+    Flight "0..*" -- "2" Pilot : assigned to
+    
+    %% A flight has exactly one departure and one arrival airport
+    Flight "0..*" -- "1" Airport : departs from
+    Flight "0..*" -- "1" Airport : arrives at
+```
+
+&#10149;&nbsp; [**Example 2**] Relationships between `Department`, `Lecturer`, `Student` and `Course`
+
+1. A `Department` has many `Lecturer`s
+2. A `Department` has many `Student`s
+3. A `Department` offers many `Course`s
+4. Multiple `Lecturer`s can teach one `Course`.
+5. One `Lecturer` can teach multiple `Course`s.
+6. One `Student` can take many `Course`s.
+7. One `Course` can be enrolled by many `Student`s.
+
+As you can see:
+- The bullet points (1), (2) and (3) carry the idea of "part-of".
+- The bullet points (4) and (5) carry the idea of "providing/using service".
+- The bullet points (6) and (7) carry the idea of "offering/using the service".
+
+:::{.callout-note}
+Of course, we can use "has" for every sentence above in daily life. But since one `Student` rarely belongs to multiple `Department`s, the idea of "interaction between `Student` and `Department`" is not high. Students don't change from one department to another department frequenly (perhaps not at all during their entire study program). However, lecturers change courses during theit career quite frequently. For that reason, the frequency of interaction between them is quite high.
+:::
+
+```{mermaid}
+classDiagram
+    class Department {
+        -String deptName
+        +addLecturer(Lecturer l)
+        +assignCourse(Course c)
+    }
+
+    class Lecturer {
+        -String staffId
+        +String name
+        +getSpecialization() String
+    }
+
+    class Student {
+        -String studentId
+        +String gpa
+    }
+
+    class Course {
+        -String courseId
+        -int credits
+    }
+
+    %% Aggregation: Department is the "Whole"
+    Department "1" o-- "1..*" Lecturer : employs
+    Department "1" o-- "1..*" Student : manages
+    Department "1" o-- "1..*" Course : offers
+
+    %% Association: Functional relationships
+    Lecturer "1..*" -- "1..*" Course : teaches
+    Student "1..*" -- "1..*" Course : enrolled in
+```
+
+# Past paper exam
+
+## Shapes
+
+```{mermaid}
+classDiagram
+    class Shape {
+        <<abstract>>
+        +draw()* void
+    }
+
+    class Point {
+        +float x
+        +float y
+    }
+
+    class Polygon {
+        -List~Point~ points
+        +draw() void
+    }
+
+    class Rectangle {
+        -Point bottom_left
+        -float width
+        -float height
+        -float theta
+        +draw() void
+    }
+
+    class Square {
+
+    }
+
+    class Ellipse {
+        -Point center
+        -float width
+        -float height
+        -float theta
+        +draw() void
+    }
+
+    class Circle {
+        
+    }
+
+    %% Inheritance (Generalization)
+    Shape <|.. Polygon
+    Shape <|.. Ellipse
+    Polygon <|-- Rectangle
+    Rectangle <|-- Square
+    Ellipse <|-- Circle
+
+    %% Composition and Multiplicity
+    Polygon "1" *-- "3..*" Point : contains
+    Rectangle "1" *-- "1" Point : bottom-left
+    Ellipse "1" *-- "1" Point : center
+```
+
+- If you want, you can put `+draw(): void` again in `Square` and `Circle` but it is unnecessary. 
+- However, you must put `+draw(): void` in `Polygon` and `Ellipse` because they implements the `+draw(): void` in the abstract base class.
