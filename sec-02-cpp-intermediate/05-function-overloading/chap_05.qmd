@@ -1,10 +1,8 @@
 ---
-title: "Function overloading"
-# subtitle: "Control Flow"
-author: |
-    Khiem Nguyen 
-    <br>Lecturer in Multiscale Materials
-    <br><khiem.nguyen@glasgow.ac.uk>
+title: "Chapter 05: Function overloading"
+author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
+    # <br>Lecturer in Multiscale Materials
+    # <br><khiem.nguyen@glasgow.ac.uk>
 author-meta: "Lecturer in Multiscale Materials"
 
 format: 
@@ -12,12 +10,56 @@ format:
     #   beige, blood, dark, dracula, league, moon, 
     #   night, serif, simple, sky, solarized
     # highlight-style: monokai      # good for dark images
-
+    html:
+        output-file: "chap_05.html"
+        grid:
+            body-width: 1600px
+            margin-width: 300px
+            sidebar-width: 350px
+        embed-resources: true
+        theme: simple
+        highlight-style: github
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true     # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    pdf:
+        output-file: "chap_05.pdf"
+        embed-resources: true
+        theme: simple
+        highlight-style: github      # good for dark images
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
     revealjs:
         output-file: "chap_05_slide.html"
-        embed-resources: false
-        theme: simple   
+        embed-resources: true
+        theme: simple
         css: slide.css
+        number-sections: true
+        number-depth: 3
         mouse-wheel: true
         highlight-style: github
         slide-number: true
@@ -30,48 +72,7 @@ format:
         toc: true
         toc-depth: 1
         toc-title: Contents
-        
-    html:
-        output-file: "chap_05.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: false
-        theme: simple
-        highlight-style: github   
-        css: doc.css
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true          # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents        
-    pdf:
-        output-file: "chap_05.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px        
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true          # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-
+   
 ---
 
 # Introduction to function overloading
@@ -87,7 +88,7 @@ int add(int x, int y)
 :::{.incremental}
 - This trivial function adds two integers and returns an integer result. 
 - What if we also want a function that can add two floating point numbers?
-- his add() function is not suitable, as any floating point parameters would be converted to integers, causing the floating point arguments to lose their fractional values.
+- This `add()` function is not suitable, as any floating point parameters would be converted to integers, causing the floating point arguments to lose their fractional values.
 :::
 
 ## Intro to function overloading: Rationale
@@ -395,8 +396,6 @@ void print(int x, int y=4)
 }
 ```
 :::
-
-
 
 ## Default arguments cannot be redeclared. They must be declared before
 
