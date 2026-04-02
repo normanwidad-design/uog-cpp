@@ -13,7 +13,7 @@ format:
     html:
         embed-resources: true
         grid:
-            body-width: 1400px
+            body-width: 1600px
             margin-width: 20px
             sidebar-width: 200px
         # page-layout: full
@@ -214,87 +214,7 @@ $$
 This is the key algorithm we need to implement for our project assignment.
 
 
-## Linear Regression with multiple features
 
-In this section, we study:
-
-- Description of a regresison problem
-- Linear regression model
-- Loss function for training the linear regression model
-- Gradient of loss function
-
-### Problem description {#linear-regression-problem-description}
-
-We are given a dataset $\mathcal{D}$ with $m$ samples and each sample has $n$ input features $\mathbf{x}^{(i)} = (x_1^{(i)}, \ldots, x_n^{(i)}) \in \mathbb{R}^{n}$ and one output label $y \in \mathbb{R}^{n}$ -- see @eq-dataset again
-$$
-\mathcal{D} = \Big\{ (\mathbf{x}^{(1)}, y^{(1)}), (\mathbf{x}^{(2)}, y^{(2)}), \ldots, (\mathbf{x}^{(m)}, y^{(m)}) \Big\}
-$${#eq-dataset-D}
-
-This dataset can be written in two matrices
-$$
-\mathbf{X} = \begin{bmatrix}
-x_1^{(1)} & x_{2}^{(1)} & \ldots & x_{n}^{(1)} \\[3pt]
-x_1^{(2)} & x_{2}^{(2)} & \ldots & x_{n}^{(2)} \\[3pt]
-\vdots & \vdots & \ddots & \vdots & \\[3pt]
-x_1^{(m)} & x_{2}^{(m)} & \ldots & x_{n}^{(m)}
-\end{bmatrix}, \qquad 
-\mathbf{y} = \begin{bmatrix} y_{\phantom{1}}^{(1)} \\[3pt]
-y_{\phantom{1}}^{(2)} \\[3pt]
-\vdots \\[3pt]
-y_{\phantom{1}}^{(m)}
-\end{bmatrix}
-$$ {#eq-dataset-matrix-presentation}
-
-Our task is to build a model, which is actually just a function or a mapping, to predict a new output $\widehat{y}$ given a new sample (data point) $\mathbf{x}$. That is we need to construct the function $f = f(\mathbf{x})$ so that it fits the data very well. If the model can be visualized, we expect the graph $y = f(\mathbf{x})$ should fit the data points in the high-dimensional space $\mathbf{R}^{n + 1}$ very well. Now, we go through three steps mentioned in @sec-build-and-train-ml-model.
-
-### Linear regression model
-The linear regression model is defined by a simple linear relationship between input $\mathbf{x}$ and output $y$:
-$$
-\widehat{y} = f_{\mathbb{w}, b}(\mathbf{x})= \mathbf{w}\cdot \mathbf{x} + b.
-$$
-The parameters $\mathbf{w} = (w_1, \ldots, w_n)$ are called **weights** and the parameter $b$ is called **bias**. This linear regression model is fully determined by the [**learnable parameters**]{style="color:blueviolet"} $\mathbf{w}=(w_1, \ldots, w_n)$ and $b$. [**Our objective**]{style="color:gray"} is to seek these _learnable parameters_ $w_1, \ldots, w_n$ and $b$.
-
-### Loss function
-
-To measure how well the model is, we use the [**Mean Square Error**]{style="color:royalblue"} (MSE) loss function:
-$$
-\begin{aligned}
-\mathcal{L}(\mathbf{w}, b) &= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y} \big(\mathbf{x}^{(i)}) - y^{(i)} \big)^2 =  \frac{1}{m} \sum\limits_{i=1}^{m} \big(f_{\mathbf{w},b}(\mathbf{x}^{(i)}) - y^{(i)} \big)^2 \\
-&= \frac{1}{m} \sum\limits_{i=1}^{m} \big(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)} \big)^2
-\end{aligned}
-$$ {#eq-mean-square-error-loss}
-
-Note that we don't use $2m$ in the denominator as in the Assignment 01. This is just to prove that the minimium point is exactly the same, only the minimum value is scaled by a factor $1/2$. For this reason, the gradient $\nabla \mathcal{L}$ will be also scaled (see below).
-
-It is immediately clear that the loss function $\mathcal{L}$ defined as above is just a function of $\mathbf{w}$ and $b$ because the values $\mathbf{x}^{(i)}$ and $y^{(i)}$ for all $i = 1, \ldots, m$ are given in the dataset $\mathcal{D}$ (e.g., in the `.csv` file).
-
-We recall here "training the model" means "looking for $\mathbf{w}$ and $b$" and the way to do this is to implement the gradient descent method given by the iteration formula @eq-gradient-descent-update-formula. In the current case, the variable $\Theta$ corresponds to the model parameters $\mathbf{w}$ and $b$. To implement the update rule given by @eq-gradient-descent-update-formula, we need to compute the gradient $\nabla\mathcal{L}$ which refers to derivatives of $\mathcal{L}$ with respect to $w_1, w_2, \ldots, w_n$ and to $b$:
-$$
-\nabla \mathcal{L} = \bigg(\frac{\partial \mathcal{L}}{\partial w_1}, \cdots, \frac{\partial \mathcal{L}}{\partial w_n}, \frac{\partial \mathcal{L}}{\partial b} \bigg)
-$$
-
-Therefore, we need to compute the gradient of the loss function $\nabla\mathcal{L}$ to perform the gradient descent iteration algorithm.
-
-### Gradient of loss function
-
-The gradient of $\mathcal{L}$ given by @eq-mean-square-error-loss is computed as follows^[You can try to carry out the derivation. It is surprisingly easy to be honest. Clever students like you will definitely do this 😏😏] -- If you are interested in the derivation, please refer `derivation.html`.
-$$
-\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial w_1} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) x_{1}^{(i)} \\[3pt]
-& \text{so on} \\[3pt]
-\frac{\partial \mathcal{L}}{\partial w_n} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) x_{n}^{(i)} \\[3pt]
-\frac{\partial \mathcal{L}}{\partial b} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) \cdot 1 \\[3pt]
-\end{aligned}
-$$
-Note that since we have $m$ instead of $2m$ in the denominator of @eq-mean-square-error-loss, the gradient is also scaled, and thus we see number $2$ in the nominator of $\frac{2}{m}$ as compared to $\frac{1}{m}$ in the Assignment 01. By plugging these equations in @eq-gradient-descent-update-formula, we obtain the following update rule
-$$
-\begin{aligned}
-w_1^{[t+1]} &:= w_{1}^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] x_{1}^{(i)} \\[3pt]
-& \text{so on} \\[3pt]
-w_n^{[t+1]} &:= w_{n}^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] x_{n}^{(i)} \\[3pt]
-b^{[t+1]} &:= b^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] \cdot 1\\[3pt]
-\end{aligned}
-$$
 
 ## Logistic Regression with multiple features
 
