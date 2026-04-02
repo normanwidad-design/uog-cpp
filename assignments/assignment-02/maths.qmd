@@ -1,0 +1,463 @@
+---
+title: "Mathematics behind Linear Regression and Logistic Regression"
+# subtitle: "C++ Object-oriented Programming"
+author:
+    Khiem Nguyen 
+    <br> Lecturer in Multiscale Materials
+    <br> <khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+jupyter: false
+execute: 
+  eval: true
+format: 
+    html:
+        output-file: "maths.html"
+        embed-resources: true
+        grid:
+            body-width: 1600px
+            margin-width: 20px
+            sidebar-width: 200px
+        # page-layout: full
+        # margin-left: 0.5em
+        # margin-right: 0.5em
+        code-fold: true
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        toc: true               # table of content
+        toc-location: left      # table of content on the left
+        toc-title: "Table of Content"   # table of content title
+
+    pdf:
+        embed-resources: true
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        colorlinks: true
+---
+
+**Equations from main file `assignment_02.html`**
+
+**General Dataset**
+$$
+\mathcal{D} = \Big\{ \big( \mathbf{x}^{(1)}, y^{(1)} \big), \big( \mathbf{x}^{(2)}, y^{(2)} \big), \ldots, \big( \mathbf{x}^{(m)}, y^{(m)} \big) \Big\}
+$$ {#eq-dataset}
+
+**Gradient Descent Update Formla**
+$$
+\Theta^{[t+1]} := \Theta^{[t]} - \alpha \nabla \mathcal{L}(\Theta^{[t]}),\quad \forall t= 0, 1, 2, \ldots
+$${#eq-gradient-descent-update-formula}
+
+# Linear Regression with multiple features: Theory
+
+In this section, we study:
+
+- Description of a regresison problem
+- Linear regression model
+- Loss function for training the linear regression model
+- Gradient of loss function
+
+## Problem description {#linear-regression-problem-description}
+
+We are given a dataset $\mathcal{D}$ with $m$ samples and each sample has $n$ input features $\mathbf{x}^{(i)} = (x_1^{(i)}, \ldots, x_n^{(i)}) \in \mathbb{R}^{n}$ and one output label $y \in \mathbb{R}^{n}$ -- see @eq-dataset again
+$$
+\mathcal{D} = \Big\{ (\mathbf{x}^{(1)}, y^{(1)}), (\mathbf{x}^{(2)}, y^{(2)}), \ldots, (\mathbf{x}^{(m)}, y^{(m)}) \Big\}
+$${#eq-dataset-D}
+
+This dataset can be written in two matrices
+$$
+\mathbf{X} = \begin{bmatrix}
+x_1^{(1)} & x_{2}^{(1)} & \ldots & x_{n}^{(1)} \\[3pt]
+x_1^{(2)} & x_{2}^{(2)} & \ldots & x_{n}^{(2)} \\[3pt]
+\vdots & \vdots & \ddots & \vdots & \\[3pt]
+x_1^{(m)} & x_{2}^{(m)} & \ldots & x_{n}^{(m)}
+\end{bmatrix}, \qquad 
+\mathbf{y} = \begin{bmatrix} y_{\phantom{1}}^{(1)} \\[3pt]
+y_{\phantom{1}}^{(2)} \\[3pt]
+\vdots \\[3pt]
+y_{\phantom{1}}^{(m)}
+\end{bmatrix}
+$$ {#eq-dataset-matrix-presentation}
+
+Our task is to build a model, which is actually just a function or a mapping, to predict a new output $\widehat{y}$ given a new sample (data point) $\mathbf{x}$. That is we need to construct the function $f = f(\mathbf{x})$ so that it fits the data very well. If the model can be visualized, we expect the graph $y = f(\mathbf{x})$ should fit the data points in the high-dimensional space $\mathbf{R}^{n + 1}$ very well. Now, we go through three steps mentioned in section "Build and Train ML models"
+
+## Linear regression model
+The linear regression model is defined by a simple linear relationship between input $\mathbf{x}$ and output $y$:
+$$
+\widehat{y} = f_{\mathbf{w}, b}(\mathbf{x})= \mathbf{w}\cdot \mathbf{x} + b.
+$$
+The parameters $\mathbf{w} = (w_1, \ldots, w_n)$ are called **weights** and the parameter $b$ is called **bias**. This linear regression model is fully determined by the [**learnable parameters**]{style="color:blueviolet"} $\mathbf{w}=(w_1, \ldots, w_n)$ and $b$. [**Our objective**]{style="color:gray"} is to seek these _learnable parameters_ $w_1, \ldots, w_n$ and $b$.
+
+## Loss function
+
+To measure how well the model is, we use the [**Mean Square Error**]{style="color:royalblue"} (MSE) loss function:
+$$
+\begin{aligned}
+\mathcal{L}(\mathbf{w}, b) &= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y} \big(\mathbf{x}^{(i)}) - y^{(i)} \big)^2 =  \frac{1}{m} \sum\limits_{i=1}^{m} \big(f_{\mathbf{w},b}(\mathbf{x}^{(i)}) - y^{(i)} \big)^2 \\
+&= \frac{1}{m} \sum\limits_{i=1}^{m} \big(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)} \big)^2
+\end{aligned}
+$$ {#eq-mean-square-error-loss}
+
+Note that we don't use $2m$ in the denominator as in the Assignment 01. This is just to prove that the minimium point is exactly the same, only the minimum value is scaled by a factor $1/2$. For this reason, the gradient $\nabla \mathcal{L}$ will be also scaled (see below).
+
+It is immediately clear that the loss function $\mathcal{L}$ defined as above is just a function of $\mathbf{w}$ and $b$ because the values $\mathbf{x}^{(i)}$ and $y^{(i)}$ for all $i = 1, \ldots, m$ are given in the dataset $\mathcal{D}$ (e.g., in the `.csv` file).
+
+We recall here "training the model" means "looking for $\mathbf{w}$ and $b$" and the way to do this is to implement the gradient descent method given by the iteration formula @eq-gradient-descent-update-formula. In the current case, the variable $\Theta$ corresponds to the model parameters $\mathbf{w}$ and $b$. To implement the update rule given by @eq-gradient-descent-update-formula, we need to compute the gradient $\nabla\mathcal{L}$ which refers to derivatives of $\mathcal{L}$ with respect to $w_1, w_2, \ldots, w_n$ and to $b$:
+$$
+\nabla \mathcal{L} = \bigg(\frac{\partial \mathcal{L}}{\partial w_1}, \cdots, \frac{\partial \mathcal{L}}{\partial w_n}, \frac{\partial \mathcal{L}}{\partial b} \bigg)
+$$
+
+Therefore, we need to compute the gradient of the loss function $\nabla\mathcal{L}$ to perform the gradient descent iteration algorithm.
+
+## Gradient of loss function
+
+The gradient of $\mathcal{L}$ given by @eq-mean-square-error-loss is computed as follows^[You can try to carry out the derivation. It is surprisingly easy to be honest. Clever students like you will definitely do this 😏😏] -- If you are interested in the derivation, please refer `derivation.html`.
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial w_1} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) x_{1}^{(i)} \\[3pt]
+& \text{so on} \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_n} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) x_{n}^{(i)} \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &= \frac{2}{m} \sum\limits_{i=1}^{m} \big(\widehat{y}(\mathbf{x}^{(i)}) - y^{(i)} \big) \cdot 1 \\[3pt]
+\end{aligned}
+$$
+Note that since we have $m$ instead of $2m$ in the denominator of @eq-mean-square-error-loss, the gradient is also scaled, and thus we see number $2$ in the nominator of $\frac{2}{m}$ as compared to $\frac{1}{m}$ in the Assignment 01. By plugging these equations in @eq-gradient-descent-update-formula, we obtain the following update rule
+$$
+\begin{aligned}
+w_1^{[t+1]} &:= w_{1}^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] x_{1}^{(i)} \\[3pt]
+& \text{so on} \\[3pt]
+w_n^{[t+1]} &:= w_{n}^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] x_{n}^{(i)} \\[3pt]
+b^{[t+1]} &:= b^{[t]} - \frac{2}{m} \sum\limits_{i=1}^{m} \big[\big(\mathbf{w}^{[t]} \cdot \mathbf{x}^{(i)} + b^{[t]}\big) - y^{(i)} \big] \cdot 1\\[3pt]
+\end{aligned}
+$$
+
+## Numerical Example
+
+
+[**The Black Box Trap**]{style="color:royalblue"}&nbsp; In modern engineering and physics, it is easy to feed parameters into a simulation or a Python script and get a result. However, this normally leads to the feeling that "we understand it" while in reality "we don't quite really understand it."
+
+:::{.callout-tip}
+In **MIT** or **CalTech** you will frequently hear professors and Teaching Assitants reiterate some version of "[If you cannot solve it for $n = 2$, you don't understand the general case.]{style="color:red"}"
+:::
+
+For this reason, let us go through all the theoretical steps above using a simple $2$-dimensional example with $4$ samples. Note that with only $3$ points, we can always build a plane that go through all $3$ points. Thus, we chose $4$ points.
+
+
+[**Dataset**]{style="color:royalblue"}
+
+For reproducibility purpose, we design the dataset by using the exact/reference linear regression model:
+
+$$
+f(x_1, x_2) = \frac{1}{2} x_1 - \frac{1}{2} x_2 + \frac{3}{2}
+$${#eq-reference-linear-regression-model}
+
+The dataset is given by the following table
+
+| $x_1$ | $x_2$ | $y$ |
+|:--|:--|:--|
+| $0$ | $0$ | $3/2$ |
+| $1$ | $0$ | $2$ | 
+| $0$ | $1$ | $1$ |
+| $1$ | $1$ | $v$ |
+
+We keep the label value of the last data point general, denoted by $v$. We shall see that by adjusting $v$, the loss function will also change and the minimum point is not always equal to $0$.
+
+### Hand-written calculation
+
+
+[**Linear Regression Model**]{style="color:royalblue"}
+
+In this example, we have $2$ features. The linear regression model for $2$ input features reads
+$$
+\widehat{y} = f_{\mathbf{w}, b}(x_1, x_2) = w_1 x_1 + w_2 x_2 + b.
+$$
+
+[**Loss Function**]{style="color:royalblue"}
+
+We reiterate the formula for the loss function
+$$
+\begin{aligned}
+\mathcal{L}(w_1, w_2, b) &= \frac{1}{4} \sum_{i=1}^{4} \big(\hat{y}^{(i)} - y^{(i)} \big)^2 = \frac{1}{4}\sum\limits_{i=1}^{4} \big[ e^{(i)} \big]^2 \\[3pt]
+&= \frac{1}{4} \sum\limits_{i=1}^{4}\Big( w_1 x_1^{(i)} + w_2 x_2^{(i)} + b - y^{(i)} \Big)^2 
+\end{aligned}
+$${#eq-loss-function-linear-regression-example-model}
+
+where the error term $e^{(i)}$ is defined by
+$$
+\begin{aligned}
+e^{(i)} &= \widehat{y}^{(i)} - y^{(i)} = f_{\mathbf{w}, b}(\mathbf{x}^{(i)}) - y^{(i)} \\[3pt]
+&= w_1 x_1^{(i)} + w_2 x_2^{(i)} + b - y^{(i)}.
+\end{aligned}
+$$
+
+For the dataset with $m=4$ samples, we calculate the individual squared errors by direct substitution:
+$$
+\begin{aligned}
+\text{For } (0, 0, 3/2) &: e^{(1)} = (b - 3/2) \\[6pt]
+\text{For } (1, 0, 2)  &: e^{(2)} = (w_1 + b - 2) \\[6pt]
+\text{For } (0, 1, 1)  &: e^{(3)} = (w_2 + b - 1) \\[6pt]
+\text{For } (1, 1, v)  &: e^{(4)} = (w_1 + w_2 + b - v)
+\end{aligned}
+$$
+
+Substituting these expressions for $e^{(i)}$ into @eq-loss-function-linear-regression-example-model, we arrive at the total loss function
+$$
+\mathcal{L}(w_1, w_2, b) = \frac{1}{4} \bigg[ \left(b - \frac{3}{2}\right)^2 + 
+    (w_1 + b - 2)^2 + (w_2 + b - 1)^2 + (w_1 + w_2 + b - v)^2  \bigg]
+$$
+
+[**Note**]{style="color:crimson"}&nbsp; It is clear that no matter how complicated the dataset is, the loss function for linear regression models is a quadratic function with respect to the model parameters. In this case, $\mathcal{L}$ is a quadratic function of $(w_1, w_2, b)$. For this reason, there exists one and only one minimal point $\mathcal{L}$, which is computed by solving the equation $\nabla \mathcal{L} = 0$.
+
+[**Gradient of the Loss Function**]{style="color:royalblue"}
+
+The mimization of $\mathcal{L}$ can be obtained by solving the equation $\nabla \mathcal{L} = 0$, namely the equations retrieved by setting the partial derivative of $\mathcal{L}$ with respect to all the variables to $0$. In this case, it simply reads
+$$
+\nabla\mathcal{L} = 0\quad\Leftrightarrow \quad \left\{\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial w_1} &= 0, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_1} &= 0, \\[3pt] 
+\frac{\partial \mathcal{L}}{\partial b} &= 0\end{aligned} \right.
+$${#eq-optimality-condition}
+
+We can easily derive
+$$
+\frac{\partial \mathcal{L}}{\partial w_1} = \frac{1}{2} \left[ (w_1 + b - 2) + (w_1 + w_2 + b - v) \right], \qquad \frac{\partial \mathcal{L}}{\partial w_2} = \frac{1}{2} \left[ (w_2 + b - 1) + (w_1 + w_2 + b - v) \right], \qquad \frac{\partial \mathcal{L}}{\partial b} = \frac{1}{2} \left[ (b - 1.5) + (w_1 + b - 2) + (w_2 + b - 1) + (w_1 + w_2 + b - v) \right]
+$$
+
+Then, we obtain a system of $3$ equations for $3$ **learnable parameters** $w_1, w_2, b$. The three equations given by the optimality condition @eq-optimality-condition have one single solution:
+
+$$
+\begin{aligned}
+w_1 &= \frac{2v - 1}{4} \\
+w_2 &= \frac{2v - 5}{4} \\
+b &= \frac{15 - 2v}{8}
+\end{aligned}
+$${#eq-minimal-point-linear-regression-example-model}
+
+[**Discussion on the loss function**]{style="color:royalblue"}
+
+By substituting @eq-minimal-point-linear-regression-example-model into the loss function @eq-loss-function-linear-regression-example-model, we obtain the minimum of the loss function -- note that this minimum value still depends on $v$ because we allow the forth data points to move freely in the $y$-axis with value $v$:
+
+Substituting the optimal parameters back into the error terms (without being squared here):
+$$
+\begin{aligned}
+    e^{(1)} &= \left(\frac{2v - 1}{4}\right) \cdot 0 + \left(\frac{2v - 5}{4}\right) \cdot 0 + \left( \frac{15 - 2v}{8}\right) - \frac{3}{2}  = \frac{3 - 2v}{8} \\
+    e^{(2)} &= \left(\frac{2v - 1}{4}\right) \cdot 1 + \left(\frac{2v - 5}{4}\right) \cdot 0 +  \left(\frac{15 - 2v}{8}\right) - 2 = \frac{2v - 3}{8} \\
+    e^{(3)} &= \left(\frac{2v - 1}{4}\right) \cdot 0 + \left(\frac{2v - 5}{4}\right) \cdot 1 + \left(\frac{15 - 2v}{8}\right) - 1 = \frac{2v - 3}{8} \\
+    e^{(4)} &= \left(\frac{2v - 1}{4}\right) \cdot 1 + \left(\frac{2v - 5}{4}\right) \cdot 1 + \left(\frac{15 - 2v}{8}\right) - v = \frac{3 - 2v}{8}
+\end{aligned}
+$$
+
+The loss function evaluates to
+$$
+\mathcal{L}_{\text{min}} = \frac{1}{4}\sum\limits_{i=1}^{4} \big[e^{(i)}\big]^2 = \frac{(2v - 3)^2}{64}
+$$
+
+:::{.callout-note}
+**The minimum of a loss function does not need to be zero**
+:::
+
+As we can see the minimal loss function $\mathcal{L}_\text{min}$ can be non-zero depending on $v$. The next legitimate question is that what it implies when $\mathcal{L}_\text{min} = 0$. Let us think of this scenario. 
+
+The loss function measures how well our prediction model makes prediction on the seen/given data. The zero loss function implies that the model has made perfect prediction on the seen/given dataset because all the error terms $e^{(i)}$ must be equal to zero for this to occur. As a consequence, all the data points sit perfectly on the graph of the function 
+$$
+(G): \quad y = f_{\mathbf{w}, b}(\mathbf{x}) = w_1 x_1 + w_2 x_2 + b.
+$$ 
+
+For a dataset of $3$ data points, we can always construct a plane going through all the data points regardless of the actual values of the data points. This is no longer the case for $4$ data points. When $v = 3/2$, the minimum of loss function is equal to zero, $\mathcal{L}_{\text{min}} = 0$. In this case, the 4th data point is given by $(1, 1, 3/2)$, which sits perfectly on the graph -- see the reference model @eq-reference-linear-regression-model
+
+$$
+y = \widehat{f}(x_1, x_2) = \frac{1}{2}x_1 - \frac{1}{2}x_2 + \frac{3}{2} 
+$$
+
+because $y^{(4)} = \widehat{f}(x_1^{(4)}, x_2^{(4)})$:
+$$
+\frac{3}{2} = \frac{1}{2} \cdot 1 - \frac{1}{2} \cdot 1 + \frac{3}{2}
+$$
+
+### Python implementation using symbolic computation
+
+Instead of computing the loss function by hand, I take this opportunity to introduce you to a useful library in Python: [SymPy](https://www.sympy.org/). To this end, please just follow the code snippet. The code is quite easy to understand.
+
+First of all, you need to activate the conda environment or the virtual environment and then install `sympy` by using one of the following towo command lines:
+
+:::{.columns}
+
+:::{.column width="40%"}
+```{bash}
+conda install sympy
+```
+:::
+:::{.column width="40%"}
+```{bash}
+pip install sympy
+```
+:::
+
+:::
+
+[**Compute loss function**]{style="color:royalblue"}
+
+As the starting point, we setup the dataset, define the linear regression model and compute the loss function with the help of symbolic calculation by `sympy` library.
+
+```{python}
+import sympy as sp
+
+# Define symbols
+w1, w2, b, v = sp.symbols('w1 w2 b v')
+
+# Define the dataset (x1, x2, y)
+data = [(0, 0, 3/2), (1, 0, 2), (0, 1, 1), (1, 1, v)]
+
+def model(x1_val, x2_val):
+    return w1 * x1_val + w2 * x2_val + b
+
+# Compute the sum of squared errors
+squared_errors = []
+for x1_val, x2_val, y_val in data:
+    pred = model(x1_val, x2_val)    # compute prediction using the model.
+    squared_err = (pred - y_val)**2       
+    squared_errors.append(squared_err)
+
+n_samples = len(data)
+loss_function = 1 / (n_samples) * sum(squared_errors)
+
+# Display results
+def prettify(text: str, n_dashes=30, char="="):
+    long_dash = n_dashes*char
+    print("\n" + long_dash + "\n" + text + "\n" + long_dash)
+
+prettify("Symbolic Loss Function")
+sp.pprint(loss_function)
+```
+
+[**Compute gradient of loss function and optimal parameters of the linear regression model**]{style="color:royalblue"}
+
+Next, we solve the equation $\nabla \mathcal{L} = 0$ for the "learnable parameters", namely the model parameters $(w_1, w_2, b)$. The results are printed for comparison with hand calculation above. 
+
+:::{.callout-tip}
+In fact, I used the results obtained by Python to write down the hand-written computation.
+:::
+
+```{python}
+
+
+# Compute the gradients
+grad_w1 = sp.diff(loss_function, w1)
+grad_w2 = sp.diff(loss_function, w2)
+grad_b = sp.diff(loss_function, b)
+
+grad = [("dL/dw1", grad_w1), ("dL/dw2", grad_w2), ("dL/db", grad_b)]
+prettify(f"Gradient of the Loss Function")
+for deriv, expr in grad:
+    print(f"{deriv} = {expr}") 
+
+# Solve the system gradient-of-loss = 0
+solution = sp.solve([grad_w1, grad_w2, grad_b], (w1, w2, b))
+
+prettify(f"Optimized model parameters")
+for param, expr in solution.items():
+    print(f"{param} = {expr}")
+```
+
+[**Compute minimum of loss function**]{style="color:royalblue"}
+
+By direct substitution of the solution obtained above into the loss function `loss`, we can compute the minimum of the loss function
+
+```{python}
+# Substitute the solution for w1, w2, b into loss function
+min_loss = loss_function.subs(solution)
+min_loss_simplified = sp.simplify(min_loss)
+
+prettify(f"Min of loss function")
+print(f"L_min = {min_loss_simplified}")
+
+# Solve L_min = 0 for v
+vhat = sp.solve(min_loss_simplified, v)[0]
+print(f"v (for L_min = 0): {vhat:.3f}")
+```
+
+[**Visualization**]{style="color:royalblue"}
+
+Let us visualize the results.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def plot_regression_3d(v_val, ax, title):
+    # Data points
+    x1_data = np.array([0, 1, 0, 1])
+    x2_data = np.array([0, 0, 1, 1])
+    y_data  = np.array([1.5, 2, 1, v_val])
+
+    # Optimal parameters (derived from grad L = 0)
+    w1 = (2 * v_val - 1) / 4
+    w2 = (2 * v_val - 5) / 4
+    b  = (15 - 2 * v_val) / 8
+
+    # 3. Create grid for the plane
+    x1_range = np.linspace(-0.2, 1.2, 20)
+    x2_range = np.linspace(-0.2, 1.2, 20)
+    X1, X2 = np.meshgrid(x1_range, x2_range)
+    Y_plane = w1 * X1 + w2 * X2 + b
+
+    surf = ax.plot_surface(X1, X2, Y_plane, alpha=0.4, cmap='viridis', edgecolor='none')
+    
+    ax.scatter(x1_data, x2_data, y_data, color='red', s=80, depthshade=False, label='Data')
+
+    # Plot residuals (vertical error lines)
+    for i in range(len(x1_data)):
+        pred = w1 * x1_data[i] + w2 * x2_data[i] + b
+        ax.plot([x1_data[i], x1_data[i]], [x2_data[i], x2_data[i]], [y_data[i], pred], 
+                color='black', linestyle='--', alpha=0.7)
+
+    # Formatting
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel('$x_1$')
+    ax.set_ylabel('$x_2$')
+    ax.set_zlabel('$y$')
+    ax.set_zlim(-2, 3) # Keep scale consistent for comparison
+
+# Create the figure with two subplots
+fig = plt.figure(figsize=(4.5, 10))
+
+# Figure 1: v = -1.5 (High Loss)
+ax1 = fig.add_subplot(211, projection='3d')
+plot_regression_3d(-1.5, ax1, "Linear Regression: $v = -1.5$ (Non-coplanar)")
+
+# Figure 2: v = 1.5 (Zero Loss)
+ax2 = fig.add_subplot(212, projection='3d')
+plot_regression_3d(1.5, ax2, "Linear Regression: $v = 1.5$ (Perfect Fit)")
+
+plt.tight_layout()
+plt.show()
+```
+
+
+
+# Logistic Regression with multiple features
+
+In this section, we study:
+
+- Description of a classification problem
+- Logistic regression model
+- Loss function for training the logistic regression model
+- Gradient of loss function
+  
+## Problem description
+
+The problem description for a classification problem is quite similar to the description of a regression problem in terms of the given dataset and the ultimate goal prediction, except that the label $y$ is not continous value. For a $K$-category classification problem, the label $y$ can take one of the $K$ finite values $\{0, \ldots, K-1\}$. Examples are:
+ 
+- For binary classification problem of ECG data, we have $K = 1$ and the label can take value of either $0$ or $1$. 
+- For hand-written digit classification, we have $10$-category classification with $K = 9$ and the label can take one value of the $10$ finite values $\{0, \ldots, 9\}$
+
+For this reason, the dataset notation @eq-dataset-D and the matrix-presentation of this dataset @eq-dataset-matrix-presentation should be the same except that the label $y^{(i)}$ for all the samples can take only one value in the finite set $\{0, \ldots, K-1\}$ for the $K$-category classification problem.
+
+We shall study 
+
+## Logistic regression for binary classification

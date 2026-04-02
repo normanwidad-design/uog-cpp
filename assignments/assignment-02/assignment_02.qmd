@@ -216,24 +216,6 @@ This is the key algorithm we need to implement for our project assignment.
 
 
 
-## Logistic Regression with multiple features
-
-In this section, we study:
-
-- Description of a classification problem
-- Logistic regression model
-- Loss function for training the logistic regression model
-- Gradient of loss function
-  
-### Problem description
-
-The problem description for a classification problem is quite similar to the description of a regression problem in terms of the given dataset and the ultimate goal prediction, except that the label $y$ is not continous value. For a $K$-category classification problem, the label $y$ can take one of the $K$ finite values $\{0, \ldots, K-1\}$. Examples are:
- 
-- For binary classification problem of ECG data, we have $K = 1$ and the label can take value of either $0$ or $1$. 
-- For hand-written digit classification, we have $10$-category classification with $K = 9$ and the label can take one value of the $10$ finite values $\{0, \ldots, 9\}$
-
-For this reason, the dataset notation @eq-dataset-D and the matrix-presentation of this dataset @eq-dataset-matrix-presentation should be the same except that the label $y^{(i)}$ for all the samples can take only one value in the finite set $\{0, \ldots, K-1\}$ for the $K$-category classification problem.
-
 
 
 # Task
